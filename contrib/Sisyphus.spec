@@ -1,6 +1,6 @@
 Name:		etcnet
 Version:	0.9.7
-Release:	alt0.M40.1
+Release:	alt0.M41.1
 Summary:	/etc/net network configuration system
 Summary(ru_RU.KOI8-R): система конфигурации сети /etc/net
 License:	GPL-2
@@ -156,8 +156,8 @@ fi
 %files full
 
 %changelog
-* Mon Jul 14 2008 Sergey Bolshakov <sbolshakov@altlinux.ru> 0.9.7-alt0.M40.1
-- rebuilt for 4.0 branch
+* Mon Jul 14 2008 Sergey Bolshakov <sbolshakov@altlinux.ru> 0.9.7-alt0.M41.1
+- rebuilt for 4.1 branch
 
 * Mon Jul 14 2008 Denis Ovsienko <pilot@altlinux.ru> 0.9.7-alt1
 - another maintenance release
