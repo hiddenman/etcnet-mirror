@@ -1,6 +1,6 @@
 Name:		etcnet
 Version:	0.9.10
-Release:	alt3
+Release:	alt3.1
 
 Summary:	/etc/net network configuration system
 License:	GPL-2
@@ -137,6 +137,10 @@ fi
 %files full
 
 %changelog
+* Tue Mar 16 2010 L.A. Kostis <lakostis@altlinux.ru> 0.9.10-alt3.1
+- NMU:
+  + added wired 802.1X authentication support.
+
 * Sat Mar 13 2010 Sergey Bolshakov <sbolshakov@altlinux.ru> 0.9.10-alt3
 - ipset support added
 - use sysfs interface for bonding (#22665)
