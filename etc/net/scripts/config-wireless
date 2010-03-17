@@ -10,7 +10,6 @@ usage()
 
 [ -z "$1" ] && usage
 NAME=$1
-ARGS=
 
 pickup_defaults
 pickup_options
@@ -39,13 +38,10 @@ if profiled_filename prof_conf "$MYIFACEDIR/wpa_supplicant.conf"; then
 		print_error "$WPA_CLI does not exist or is not executable. Try installing wpa_supplicant RPM."
 		exit 1
 	}
-	# wired 802.1X authentication needs special handling
-	[ -n "$WPA_DRIVER" -a "$WPA_DRIVER" = "wired" ] && ARGS="/etc/net/scripts/ifup-wireless $1; exit 0"
 
 	$WPA_SUPPLICANT -i$NAME${WPA_DRIVER:+ -D$WPA_DRIVER} \
 		-B -P/var/run/wpa_supplicant-$NAME.pid -c $prof_conf && \
 		$WPA_CLI -i$NAME -B -P/var/run/wpa_cli-$NAME.pid -a $SCRIPTDIR/wpa_cli.action && \
-		[ -z "$ARGS" ] || exec $ARGS \
 		exit 10
 	exit 11
 fi

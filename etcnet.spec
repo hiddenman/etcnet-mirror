@@ -1,6 +1,6 @@
 Name:		etcnet
 Version:	0.9.10
-Release:	alt3.1
+Release:	alt3.2
 
 Summary:	/etc/net network configuration system
 License:	GPL-2
@@ -137,6 +137,11 @@ fi
 %files full
 
 %changelog
+* Wed Mar 17 2010 L.A. Kostis <lakostis@altlinux.ru> 0.9.10-alt3.2
+- NMU:
+  + simplify wired patch (wrong config options mislead me).
+  + add config example for wired 802.1X.
+
 * Tue Mar 16 2010 L.A. Kostis <lakostis@altlinux.ru> 0.9.10-alt3.1
 - NMU:
   + added wired 802.1X authentication support.
