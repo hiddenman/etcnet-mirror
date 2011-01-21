@@ -1,6 +1,6 @@
 Name:		etcnet
 Version:	0.9.10
-Release:	alt5
+Release:	alt4.M51.1
 
 Summary:	/etc/net network configuration system
 License:	GPL-2
@@ -137,6 +137,9 @@ fi
 %files full
 
 %changelog
+* Fri Jan 21 2011 Vladimir V. Kamarzin <vvk@altlinux.org> 0.9.10-alt4.M51.1
+- rebuild for 5.1
+
 * Mon Mar 22 2010 Sergey Bolshakov <sbolshakov@altlinux.ru> 0.9.10-alt5
 - do not flush ipv6 addresses from lo (#22941 again)
 
