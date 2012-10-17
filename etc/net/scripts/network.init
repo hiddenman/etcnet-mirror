@@ -181,6 +181,7 @@ start()
 	ExecIfExecutable $LOCALSCRIPTDIR/netup-pre $*
 	local defopts fwopts
 	! profiled_filename defopts "/etc/net/ifaces/default/options" || . "$defopts"
+	is_yes "$CONFIG_IPV6" && $MODPROBE ipv6
 	is_yes "$CONFIG_FW" && \
 	    {
 		! profiled_filename fwopts /etc/net/ifaces/default/fw/options ||
