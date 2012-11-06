@@ -14,6 +14,9 @@ NAME=$1
 pickup_defaults
 pickup_options
 
+# Do not try to use iw* on wired interface
+if ! is_yes "$CONFIG_DOT1X"; then
+
 # configure private extensions
 if [ -x "${IWPRIV:=$DEFAULT_IWPRIV}" ]; then
 	if profiled_filename_exist "" "$IFACEDIR/default/iwpriv"; then
@@ -28,6 +31,8 @@ if [ -x "${IWCONFIG:=$DEFAULT_IWCONFIG}" ]; then
 		print_warning "$IFACEDIR/default/iwconfig is not supported anymore"
 	fi
 	xargise_file $MYIFACEDIR/iwconfig "$IWCONFIG $NAME"
+fi
+
 fi
 
 # Configure WPA, return special return codes (explained in ifup-common).

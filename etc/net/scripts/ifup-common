@@ -44,10 +44,10 @@ case "$USE_IFPLUGD" in
 		# A and D
 		if ! is_yes "$IN_IFPLUGD"; then
 			# D
-			! is_wireless $NAME || {
-				print_error "ERROR: USE_IFPLUGD=yes for $NAME, wireless card is unsupported"
+			if is_yes "$CONFIG_WIRELESS" || is_yes "$CONFIG_DOT1X"; then
+				print_error "USE_IFPLUGD=yes and CONFIG_WIRELESS or CONFIG_DOT1X are mutually exclusive"
 				exit 1
-			}
+			fi
 			! is_yes "$HAVE_IFPLUGD" && exit 1
 			if is_yes "$PERSISTENT_IFPLUGD"; then
 				if ! ifplugd_runs; then
@@ -216,7 +216,7 @@ fi
 # 1: generic error
 # 10: no error, complete the rest via script executed by supplicant
 # 11: failed to run supplicant
-if ( is_yes "$CONFIG_WIRELESS" && is_wireless $NAME ) || ( is_yes "$CONFIG_DOT1X" ) ; then
+if is_yes "$CONFIG_WIRELESS" || is_yes "$CONFIG_DOT1X" ; then
 	if ! is_yes $IN_WPA_CLI; then
 		$SCRIPTDIR/config-wireless $NAME
 		rc=$?
