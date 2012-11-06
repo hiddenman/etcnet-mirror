@@ -149,7 +149,7 @@ process_sysctl_conf()
 					VARPREFIX="net/ipv4/neigh/$NAME/"
 				;;
 			# *** IPv6 conf ***
-				accept_ra|autoconf|dad_transmits|force_mld_version|hop_limit)
+				disable_ipv6|accept_ra|autoconf|dad_transmits|force_mld_version|hop_limit)
 					VARPREFIX="net/ipv6/conf/$NAME/"
 				;;
 				max_addresses|max_desync_factor|mtu|regen_max_retry)
@@ -170,7 +170,7 @@ process_sysctl_conf()
 					VARNAME=${VARNAME#ipv6_}
 					VARPREFIX="net/ipv6/neigh/$NAME/"
 				;;
-				ipv4_retrans_time|ipv6_app_solicit|ipv6_ucast_solicit|ipv6_mcast_solicit)
+				ipv6_retrans_time|ipv6_app_solicit|ipv6_ucast_solicit|ipv6_mcast_solicit)
 					VARNAME=${VARNAME#ipv6_}
 					VARPREFIX="net/ipv6/neigh/$NAME/"
 				;;
