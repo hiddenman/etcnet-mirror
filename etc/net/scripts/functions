@@ -171,7 +171,7 @@ pickup_options()
 	SourceIfNotEmpty $SCRIPTDIR/functions-$TYPE
 }
 
-_print_log()
+print_log()
 {
 	local prefix="$1"; shift
 
@@ -182,12 +182,12 @@ _print_log()
 
 print_warning()
 {
-	_print_log "WARNING" "$@"
+	print_log "WARNING" "$@"
 }
 
 print_error()
 {
-	_print_log "ERROR" "$@"
+	print_log "ERROR" "$@"
 }
 
 print_message()
@@ -570,7 +570,7 @@ kill_by_pidfile()
 }
 
 declare -frx is_yes is_no SourceIfNotEmpty ExecIfExecutable source_optfile supported_type name2type
-declare -frx pickup_options print_error print_message print_progress print_nack
+declare -frx pickup_options print_log print_warning print_error print_message print_progress print_nack
 declare -frx iface_is_up try_rmmod get_mapped_ifname init_netprofile
 declare -frx profiled_filename profiled_filename_dir profiled_filename_exist profiled_filename_is
 declare -frx init_nethost foreach_child ifdown_children ifup_children ifup_parents
