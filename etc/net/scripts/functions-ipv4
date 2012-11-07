@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. $SCRIPTDIR/functions-ip
+
 # This file contains supplementary functions for config-ipv4
 try_static()
 {
@@ -13,80 +15,6 @@ try_static()
 		done
 	fi
 	return 0
-}
-
-dhcp_cmdline()
-{
-	local H T
-	case `basename $DHCP_CLIENT` in
-		dhcpcd)
-			if [ -n "$DHCP_HOSTNAME" ]; then
-				case "$DHCP_HOSTNAME" in
-					AUTO)
-						print_warning "AUTO in DHCP_HOSTNAME is no longer supported."
-					;;
-					localhost)
-						[ -n "$HOSTNAME" -a "$HOSTNAME" != "localhost" -a "$HOSTNAME" != "localhost.localdomain" ] && \
-						H="-h $HOSTNAME"
-					;;
-					*)
-						H="-h $DHCP_HOSTNAME"
-					;;
-				esac
-			fi
-			T=${DHCP_TIMEOUT:+-t $DHCP_TIMEOUT}
-			echo "$H -d $T $NAME"
-			;;
-		dhclient)
-			if [ -n "$DHCP_HOSTNAME" ]; then
-				case "$DHCP_HOSTNAME" in
-					localhost)
-						[ -n "$HOSTNAME" -a "$HOSTNAME" != "localhost" -a "$HOSTNAME" != "localhost.localdomain" ] && \
-						H="-F $HOSTNAME"
-					;;
-					*)
-						H="-H $DHCP_HOSTNAME"
-					;;
-				esac
-			fi
-			T=${DHCP_TIMEOUT:+-T $DHCP_TIMEOUT}
-			echo "$H -q $T -pf /var/run/dhclient-$NAME.pid $NAME"
-			;;
-		*)
-			print_error "Can't pick command line for DHCP client '$DHCP_CLIENT'"
-			;;
-	esac
-}
-
-# This function uses check_eth_link(), but DHCP used to work for Ethernet
-# mostly (if not only), so functions-eth should be already sourced in such
-# case. This may break one day.
-
-try_dhcp()
-{
-	[ -x "$DHCP_CLIENT" ] || {
-		print_error "$DHCP_CLIENT does not exist or is not executable. Try installing dhcpcd/dhclient RPM."
-		return 1
-	}
-	if need_detection; then
-		if check_eth_link $NAME; then
-			print_progress
-		else
-			print_nack
-			return 1
-		fi
-	fi
-	DHCP_CMDLINE=`dhcp_cmdline`
-	$DHCP_CLIENT $DHCP_ARGS $DHCP_CMDLINE >/dev/null
-	local RET=$?
-	# dhcpcd sets iface down on failure, breaking dhcp-* BOOTPROTOs
-	if [ "$RET" != "0" ]; then
-		print_nack
-		! is_yes $KEEP_DOWN && $IP link set dev $NAME up
-	else
-		print_progress
-	fi
-	return $RET
 }
 
 try_ipv4ll()
@@ -189,4 +117,3 @@ get_ipv4_addresses()
     # FIXME should we parse it by more complex regexp?
     printf "$($IP -4 addr show dev $NAME 2>/dev/null|grep -ose "\binet[[:space:]]\+[0-9.]\+"|cut -f2 -d" ")"
 }
-
