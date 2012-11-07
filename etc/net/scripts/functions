@@ -512,15 +512,16 @@ stop_dhcp_client()
 	case `basename $DHCP_CLIENT` in
 		dhcpcd)
 			local PIDFILE=/var/run/dhcpcd-$NAME.pid
+			kill_by_pidfile "$PIDFILE" 250000 $((DHCP_GRACE_TIME*4)) HUP
+			# dhcpcd will bring down the interface when stopping. To keep etcnet logics
+			# to work (running shutdown scripts for example) we should bring it up again
+			$IP link set dev $NAME up
 			;;
 		dhclient)
 			local PIDFILE=/var/run/dhclient-$NAME.pid
+			$DHCP_CLIENT -x -pf $PIDFILE -lf /var/lib/dhcp/dhclient/state/dhclient-$NAME.leases $NAME
 			;;
 	esac
-	kill_by_pidfile "$PIDFILE" 250000 $((DHCP_GRACE_TIME*4)) HUP
-	# dhcpcd will bring down the interface when stopping. To keep etcnet logics
-	# to work (running shutdown scripts for example) we should bring it up again
-	$IP link set dev $NAME up
 }
 
 stop_ipv4ll_client()
