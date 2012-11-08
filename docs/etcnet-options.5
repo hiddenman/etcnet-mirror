@@ -1,9 +1,9 @@
 .TH "etcnet-options" "5" "0.9" "Denis Ovsienko <info@etcnet.org>" ""
 .SH "NAME"
 /etc/net interface options
-.SH "DESCRIPTION"
-
-.SH "Common options"
+.SH "OPTIONS"
+.PP
+.I Common options
 .TP 
 .B TYPE
 This option defines interface type. It is required, if interface type cannot be
@@ -16,25 +16,45 @@ in interface\-specific options file will effectively disable ALL
 interfaces.
 .TP 
 .B BOOTPROTO
-BOOTPROTO can be any of the following: static, dhcp, ipv4ll.
-* "static": use ipv4address/ipv6address
-'static' has the same meaning as 'none' in initscripts/net\-scripts sense.
-If you don't want to assing any address to an interface, but still keep
+BOOTPROTO can be any of the following: static, dhcp, dhcp6, ipv4ll.
+
+.BI static
+use ipv4address/ipv6address.
+It has the same meaning as 'none' in initscripts/net\-scripts sense.
+If you don't want to assign any address to an interface, but still keep
 it up and running, you can just use 'static' and have no ipv4address file.
-* "dhcp": run DHCP client
-* "ipv4ll": run IPv4LL client (zcip)
-As far as I know, there are no working IPv6 DHCP
-implementations. IPv4LL is not required for IPv6 because of
-link\-scope addresses.
+
+.BI dhcp
+run DHCP client
+
+.BI ipv4ll
+run IPv4LL client, currently avahi-autoipd
+
+.BI dhcp6
+run DHCPv6 client
+
 Additional feature is multi\-method configurations (methods
 can be delimited by ' ', ',' or '\-':
-* "dhcp\-static": try DHCP, if it fails, configure static address(es)
-* "dhcp\-ipv4ll": same, but fallback to IPv4LL
-* "dhcp\-ipv4ll\-static": try DHCP, fallback to IPv4LL (very unlikely to fail),
+
+.BI dhcp\-static
+try DHCP, if it fails, configure IPv4 static address(es).
+Implies \fBstatic\fR for IPv6.
+
+.BI dhcp6\-static
+try DHCPv6, if it fails, configure IPv6 static address(es).
+Implies \fBstatic\fR for IPv4.
+
+.BI dhcp\-ipv4ll
+same, but fallback to IPv4LL
+
+.BI dhcp\-ipv4ll\-static
+try DHCP, fallback to IPv4LL (very unlikely to fail),
 fallback to static
+
 /etc/net will try to configure interface at the first succeeding
 method. Note that etcnet will process routes and rules despite of
 BOOTPROTO.
+
 .TP 
 .B ONBOOT
 Defines if the interface will be automatically brought up during
@@ -88,7 +108,8 @@ interface in their REQUIRES list) before the current interface is shut down.
 If set to yes, this variable will cause ifdown call for all parent (listed in current
 REQUIRES list) after the current interface is shut down.
 Note: this will not work for ifplugd\-controlled interfaces.
-.SH "Ethernet options"
+.PP
+.I Ethernet options
 .TP 
 .B MODULE
 Kernel module name (or quoted list of names), which must be loaded before interface
@@ -163,12 +184,8 @@ Optional additional DHCP client arguments.
 Possible values: 'localhost' (compute a valid hostname and send it to
 DHCP server with \-h option); 'NONE' (don't send anything); any other string
 (send the string as a hostname with \-h).
-.SH "VLAN options"
-.TP 
-.B VLAN_REORDER_HDR
-This option allows changing the REORDER_HDR flag for each VLAN interface. The flag can be
-either 0 or 1 and its meaning is described in vconfig manpage.
-.SH "IP tunnels options"
+.PP
+.I IP tunnels options
 .TP 
 .B TUNTYPE
 IP tunnel type: 'ipip' (default), 'gre' or 'sit'.
@@ -184,7 +201,9 @@ Append whatever you want (TTL, GRE keys etc). Don't set 'dev' here.
 .TP 
 .B HOST
 Optional host interface. If set, this name will be used for 'dev' option.
-.SH "IPSec tunnels options"
+.PP
+.I IPSec tunnels options
+.TP
 At least one of cipher or digest must be configured.
 CIPHERFILE and DIGESTFILE are searched in iface dir.
 If CIPHER is defined, CIPHERFILE must be defined too,
@@ -217,7 +236,8 @@ Digest file name.
 .TP 
 .B HOST
 "ipsecadm \-\-nextdev" argument
-.SH "VLAN options"
+.PP
+.I VLAN options
 .TP 
 .B VCONFIG
 Optional path to vconfig.
@@ -232,7 +252,12 @@ Required parent iface name.
 .TP 
 .B VID
 Required VLAN ID.
-.SH "DVB options"
+.TP 
+.B VLAN_REORDER_HDR
+This option allows changing the REORDER_HDR flag for each VLAN interface. The flag can be
+either 0 or 1 and its meaning is described in vconfig manpage.
+.PP
+.I DVB options
 .TP 
 .B DVBTYPE
 This is a mandatory option. Currently supported values are:
@@ -268,7 +293,8 @@ pentavalt location
 .TP 
 .B PENTAVAL_CONF
 config file name
-.SH "Bonding options"
+.PP
+.I Bonding options
 .TP 
 .B HOST
 .TP 
@@ -297,7 +323,8 @@ arp_interval:int: arp interval in milliseconds
 .br 
 arp_ip_target:string array (min = 1, max = 16): arp targets in n.n.n.n form
 .br 
-.SH "Bridge options"
+.PP
+.I Bridge options
 .TP 
 .B BRCTL
 Optional override of brctl path.
@@ -307,7 +334,8 @@ This variable must be defined for each bridge interface. This is a
 (quoted) space\-separated list of slave ethernet interfaces combining the
 bridge. Don't forget to create configurations for the slave interfaces
 too.
-.SH "PPP options"
+.PP
+.I PPP options
 .LP 
 This section assumes knowledge of pppd(8) manpage.
 .TP 

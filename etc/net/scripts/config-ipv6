@@ -14,7 +14,6 @@ eval "IPV4ADDRESS=($3)"
 eval "IPV6ADDRESS=($4)"
 pickup_defaults
 pickup_options
-$MODPROBE ipv6
 
 case $ACTION in
 	start)
@@ -24,9 +23,24 @@ case $ACTION in
 			$IP -6 address flush dev $NAME scope site >/dev/null 2>&1
 			$IP -6 address flush dev $NAME scope global >/dev/null 2>&1
 		fi
-		xargise_file $MYIFACEDIR/ipv6address "$IP -6 address add dev $NAME"
 		if iface_is_up $NAME; then
-		    config_ipv6_routes_rules add
+			case "$BOOTPROTO" in
+				static|dhcp[-,\ ]static)
+					try_static6 && config_ipv6_routes_rules add
+					;;
+				dhcp6)
+					try_dhcp6 && config_ipv6_routes_rules add
+					;;
+				dhcp6[-,\ ]static)
+					try_dhcp6 || try_static6 && config_ipv6_routes_rules add
+					;;
+				dhcp|ipv4ll|dhcp[-,\ ]ipv4ll|dhcp[-,\ ]ipv4ll[-,\ ]static)
+					# nothing to do
+					;;
+				*)
+					print_error "unknown BOOTPROTO '$BOOTPROTO'"
+					;;
+			esac
 		fi
 	;;
 	stop)
