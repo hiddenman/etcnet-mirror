@@ -507,20 +507,27 @@ need_detection()
 # This function stops DHCP client. Note that DHCP works not only
 # for pure Ethernet ifaces, so we don't keep this function in
 # functions-eth any more.
+stop_dhcp6_client()
+{
+	DHCP_CLIENT=/sbin/dhclient stop_dhcp_client 6
+}
+
 stop_dhcp_client()
 {
+	local V=${1}
 	case `basename $DHCP_CLIENT` in
 		dhcpcd)
 			local PIDFILE=/var/run/dhcpcd-$NAME.pid
+			kill_by_pidfile "$PIDFILE" 250000 $((DHCP_GRACE_TIME*4)) HUP
+			# dhcpcd will bring down the interface when stopping. To keep etcnet logics
+			# to work (running shutdown scripts for example) we should bring it up again
+			$IP link set dev $NAME up
 			;;
 		dhclient)
 			local PIDFILE=/var/run/dhclient-$NAME.pid
+			$DHCP_CLIENT ${V:+-$V} -x -pf $PIDFILE -lf /var/lib/dhcp/dhclient/state/dhclient${V}-$NAME.leases $NAME
 			;;
 	esac
-	kill_by_pidfile "$PIDFILE" 250000 $((DHCP_GRACE_TIME*4)) HUP
-	# dhcpcd will bring down the interface when stopping. To keep etcnet logics
-	# to work (running shutdown scripts for example) we should bring it up again
-	$IP link set dev $NAME up
 }
 
 stop_ipv4ll_client()

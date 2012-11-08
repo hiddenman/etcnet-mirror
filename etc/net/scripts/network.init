@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # network
-# chkconfig: 2345 10 90
+# chkconfig: 345 10 90
 # description: /etc/net is network configuration software
 
 # ALTLinux: Do not load RH compatibility interface.

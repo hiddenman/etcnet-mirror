@@ -62,6 +62,9 @@ case "$BOOTPROTO" in
 	dhcp|dhcp[-,\ ]static|dhcp[-,\ ]ipv4ll|dhcp[-,\ ]ipv4ll[-,\ ]static)
 		stop_dhcp_client
 	;;
+	dhcp6|dhcp6[-,\ ]static)
+		stop_dhcp6_client
+	;;
 	*)
 	;;
 esac

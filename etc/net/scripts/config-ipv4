@@ -24,7 +24,7 @@ case $ACTION in
 		}
 		if iface_is_up $NAME; then
 			case "$BOOTPROTO" in
-				static)
+				static|dhcp6|dhcp6[-,\ ]static)
 					try_static && config_ipv4_routes_rules add
 					;;
 				dhcp)

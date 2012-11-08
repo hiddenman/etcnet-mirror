@@ -1,5 +1,14 @@
 #!/bin/bash
 
+. $SCRIPTDIR/functions-ip
+
+# This file contains supplementary functions for config-ipv6
+
+try_static6()
+{
+	xargise_file $MYIFACEDIR/ipv6address "$IP -6 address add dev $NAME"
+}
+
 process_ipv6rules()
 {
 	local OP=${1:?missing 1st arg to $FUNCNAME}
@@ -68,4 +77,3 @@ get_ipv6_addresses()
     # FIXME should we parse braindamaged IPv6 by braindamaged regexp?
     printf "$($IP -6 addr show dev $NAME 2>/dev/null|grep -ose "\binet6[[:space:]]\+[0-9a-fA-F.:]\+"|cut -f2 -d" ")"
 }
-
