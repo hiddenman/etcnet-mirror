@@ -3,6 +3,7 @@ etcnetdir := $(prefix)/etc/net
 sysconfdir := $(prefix)/etc/sysconfig
 sbindir := $(prefix)/sbin
 initdir := $(prefix)/etc/rc.d/init.d
+unitdir := $(prefix)/lib/systemd/system
 mandir := $(prefix)/usr/share/man
 
 all:
@@ -65,6 +66,11 @@ install:
 	@ln -s ifup-ifplugd $(etcnetdir)/scripts/ifup-openvpn
 	@ln -s ifup-ifplugd $(etcnetdir)/scripts/ifup-wireless
 	@ln -s ifdown-ifplugd $(etcnetdir)/scripts/ifdown-wireless
+
+# 1.1 Install systemd unit to /lib/systemd/system tree.
+	@install -d $(unitdir)/network-online.target.wants
+	@install -m 644 etc/net/scripts/network.service $(unitdir)/network.service
+	@ln -s ../network.service $(unitdir)/network-online.target.wants/network.service
 
 # 2. Install aux files.
 	@install -D -m 644 etc/sysconfig/network $(sysconfdir)/network
