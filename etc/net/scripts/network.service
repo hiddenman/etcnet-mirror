@@ -1,7 +1,8 @@
 [Unit]
 Description=Network Connectivity
 DefaultDependencies=no
-After=systemd-udev-settle.service network-pre.target
+After=systemd-udev-settle.service network-pre.target sysinit.target
+Requires=sysinit.target
 Before=network-online.target
 Wants=network-online.target
 Conflicts=shutdown.target
