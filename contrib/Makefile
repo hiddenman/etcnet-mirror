@@ -69,8 +69,10 @@ install:
 
 # 1.1 Install systemd unit to /lib/systemd/system tree.
 	@install -d $(unitdir)/network-online.target.wants
+	@install -d $(unitdir)/multi-user.target.wants
 	@install -m 644 etc/net/scripts/network.service $(unitdir)/network.service
 	@ln -s ../network.service $(unitdir)/network-online.target.wants/network.service
+	@ln -s ../network.service $(unitdir)/multi-user.target.wants/network.service
 
 # 2. Install aux files.
 	@install -D -m 644 etc/sysconfig/network $(sysconfdir)/network
