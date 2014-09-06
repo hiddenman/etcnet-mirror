@@ -66,6 +66,8 @@ install:
 	@ln -s ifup-ifplugd $(etcnetdir)/scripts/ifup-openvpn
 	@ln -s ifup-ifplugd $(etcnetdir)/scripts/ifup-wireless
 	@ln -s ifdown-ifplugd $(etcnetdir)/scripts/ifdown-wireless
+	@ln -s create-macvlan $(etcnetdir)/scripts/create-macvtap
+	@ln -s destroy-macvlan $(etcnetdir)/scripts/destroy-macvtap
 
 # 1.1 Install systemd unit to /lib/systemd/system tree.
 	@install -d $(unitdir)/network-online.target.wants
