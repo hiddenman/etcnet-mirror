@@ -177,7 +177,10 @@ physdev-is-bridged: -mphysdev --physdev-is-bridged
 pkttype: -mpkttype --pkt-type
 random: -mrandom --average 
 realm: -mrealm --realm
-set: -mset --set
+set: -mset --match-set
+in-set: -mset --match-set
+out-set: -mset ! --match-set
+not-in-set: -mset ! --match-set
 state: -mstate --state
 tcp-source-port: -mtcp --source-port
 tcp-src-port: -mtcp --source-port
@@ -212,10 +215,8 @@ unclean: -munclean
 
 # Parameters
 from: --src
-src: --src
 source: --src
 to: --dst
-dst: --dst
 destination: --dst
 sport: --source-port
 src-port: --source-port
@@ -234,6 +235,7 @@ tcp: --protocol TCP
 udp: --protocol UDP
 icmp: --protocol ICMP
 gre: --protocol GRE
+ospf: --protocol OSPF
 jump: -j 
 jump-to: -j
 any: 0.0.0.0/0
