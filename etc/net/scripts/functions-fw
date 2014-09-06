@@ -421,11 +421,11 @@ ipset_create_set()
 
     [ -n "$HEADER" ] || return 0
     print_message -e "\tCreating the \"$SET\" set of the \"$TYPE\" type"
-    eval "$IPSET -N $SET $TYPE $HEADER" || print_error "$IPSET -N $SET $TYPE $HEADER"
+    eval "$IPSET create $SET $TYPE $HEADER" || print_error "$IPSET -N $SET $TYPE $HEADER"
 
     [ -n "$MEMBERS" ] || return 0
     while read; do
-	eval "$IPSET -A $SET $REPLY" || print_error "$IPSET -A $SET $REPLY"
+	eval "$IPSET add $SET $REPLY" || print_error "$IPSET -A $SET $REPLY"
     done <<<"$MEMBERS"
 }
 
@@ -439,7 +439,7 @@ ipset_destroy_set()
 
     [ -n "$RULE" ] || return 0
     print_message -e "\tDestroying the \"$SET\" set of the \"$TYPE\" type"
-    eval "$IPSET -X $SET" || print_error "$IPSET -X $SET"
+    eval "$IPSET destroy $SET" || print_error "$IPSET -X $SET"
 }
 
 ipset_start()

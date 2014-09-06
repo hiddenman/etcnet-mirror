@@ -94,6 +94,7 @@ for CFW_TYPE in $FWS; do
 				    unset IPTABLES_SYNTAX IPTABLES_SED_RULES
 				}
 			}
+		    xtables_preload
 		    xtables_${ACTION} "$NAME"
 		    ;;
         "ip6tables")
@@ -115,6 +116,7 @@ for CFW_TYPE in $FWS; do
 				    unset IP6TABLES_SYNTAX IP6TABLES_SED_RULES
 				}
 			}
+		    xtables_preload
 		    xtables_${ACTION} "$NAME"
 		    ;;
 	"ebtables")
@@ -125,6 +127,7 @@ for CFW_TYPE in $FWS; do
 			    print_error "$EBTABLES not found. Please, install ebtables package"
 			    continue
 			}
+		    xtables_preload
 		    xtables_${ACTION} "$NAME"
 		    ;;
 		
