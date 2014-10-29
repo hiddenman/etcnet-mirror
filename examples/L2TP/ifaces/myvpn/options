@@ -1,0 +1,2 @@
+TYPE=l2tp
+HOST=eth1

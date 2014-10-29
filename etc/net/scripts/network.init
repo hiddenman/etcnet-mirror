@@ -436,6 +436,11 @@ check()
 					;;
 				esac
 			;;
+			l2tp)
+				check_bin_x "${PPPD:-$DEFAULT_PPPD}"
+				check_bin_x "${OPENL2TPD:-$DEFAULT_OPENL2TPD}"
+				check_bin_x "${L2TPCONFIG:-$DEFAULT_L2TPCONFIG}"
+			;;
 		esac
 		print_message ' DONE'
 		# examine all files
