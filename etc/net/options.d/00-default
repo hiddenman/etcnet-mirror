@@ -69,5 +69,5 @@ AUTO_BROADCAST=off
 IFGROUP[0]='lo dummy'
 IFGROUP[1]='eth plip usb dvb bnep tuntap'
 IFGROUP[2]='vlan bond bri teql wlan macvlan macvtap'
-IFGROUP[3]='iptun ipsectun ovpn ossh'
+IFGROUP[3]='iptun ipsectun ovpn ossh l2tp'
 IFGROUP[4]='ppp'

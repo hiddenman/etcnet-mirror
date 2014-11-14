@@ -2,6 +2,5 @@
 # For detailed options description refer to etcnet-options(5) manpage,
 # section 'L2TP options'.
 
-ONBOOT=no
 # pppd assigns addresses itself, so we don't intrude by default.
 DONT_FLUSH=on
