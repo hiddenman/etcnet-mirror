@@ -32,12 +32,22 @@ exit_handler()
 
 	# Stop OPENL2TP server in case tunnel startup was fail
 	if openl2tpd_is_active; then
-		if ! l2tp_session_exists "$TUNNEL_NAME" "$SESSION_NAME"; then
+		if ! l2tp_session_established "$TUNNEL_NAME" "$SESSION_NAME"; then
 			# remove created tunnel early without session
 			l2tp_tunnel_stop "$TUNNEL_NAME"
 		fi
 
-		if ! l2tp_has_tunnels; then
+		# Wait for closing tunnels
+		local once=
+		for (( i=0; i < 50; i++ )); do
+			! $L2TPCONFIG 'tunnel list' | grep -q -s "CLOSING" && break
+			[ -z "$once" ] && print_message -n "Whait for closing tunnels" && once=1
+			print_progress
+			usleep 100000
+		done
+		[ -n "$once" ] && print_message
+
+		if ! l2tp_has_active_tunnels; then
 			openl2tpd_stop
 		fi
 	fi
@@ -61,9 +71,15 @@ fi
 # xxx: should we re-create tunnel? Yes.
 # This will also automatically destroy l2tp-session.
 if l2tp_tunnel_exists "$TUNNEL_NAME"; then
-	print_message "Tunnel $name already exists, destroy it."
+	print_message "Old tunnel $TUNNEL_NAME already exists, destroy it."
 	l2tp_tunnel_stop "$TUNNEL_NAME"
+	# Check again... Sometimes it is easy to destroy tunnel.
+	if l2tp_tunnel_exists "$TUNNEL_NAME"; then
+		print_message "Old tunnel $TUNNEL_NAME still exists, giving up."
+		exit 1
+	fi
 fi
+
 
 # Start tunnel
 if ! l2tp_tunnel_start "$TUNNEL_NAME"; then

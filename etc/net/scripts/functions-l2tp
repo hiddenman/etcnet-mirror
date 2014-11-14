@@ -62,18 +62,12 @@ openl2tpd_stop() {
 }
 
 l2tp_has_tunnels() {
-	local once=
-
-	# Wait for closing tunnels
-	for (( i=0; i < 50; i++ )); do
-		! $L2TPCONFIG 'tunnel list' | grep -q -s "CLOSING" && break
-		[ -z "$once" ] && print_message -n "Whait for closing tunnels" && once=1
-		print_progress
-		usleep 100000
-	done
-	[ -n "$once" ] && print_message
-
 	local total="$($L2TPCONFIG 'tunnel list' 2>/dev/null | wc -l)"
+	[ $total -gt 0 ]
+}
+
+l2tp_has_active_tunnels() {
+	local total="$($L2TPCONFIG 'tunnel list' 2>/dev/null | grep -vE 'CLOSING|State' | wc -l)"
 	[ $total -gt 0 ]
 }
 
@@ -102,13 +96,13 @@ l2tp_tunnel_stop() {
 	print_message "Remove tunnel $tunnel"
 	"$L2TPCONFIG" "tunnel delete tunnel_name=$tunnel"
 
-	for (( i=0; i < 50; i++ )); do
-		! l2tp_tunnel_exists "$name" && break
-		[ -z "$once" ] && print_message -n "Whait for destroy tunnel $tunnel" && once=1
-		print_progress
-		usleep 100000
-	done
-	[ -n "$once" ] && print_message
+	# for (( i=0; i < 50; i++ )); do
+	# 	l2tp_tunnel_exists "$tunnel" || break
+	# 	[ -z "$once" ] && print_message -n "Whait for destroy tunnel $tunnel" && once=1
+	# 	print_progress
+	# 	usleep 100000
+	# done
+	# [ -n "$once" ] && print_message
 }
 
 l2tp_tunnel_start() {
@@ -184,14 +178,14 @@ l2tp_session_start() {
 	local once=
 	for (( i=0; i < 50; i++ )); do
 		l2tp_session_established "$tunnel_name" "$session_name" && break
-		[ -z "$once" ] && print_message -n "Wait to establish tunnel $tunnel_name" && once=1
+		[ -z "$once" ] && print_message -n "Wait to establish session $session_name in $tunnel_name" && once=1
 		print_progress
 		usleep 100000
 	done
 	[ -n "$once" ] && print_message
 
 	# l2tpconfig - always returns 0, even in case unsuccessful session creation
-	if ! l2tp_session_exists "$tunnel_name" "$session_name"; then
+	if ! l2tp_session_established "$tunnel_name" "$session_name"; then
 		print_message "Can not create session $session_name"
 		# fail
 		return 1
