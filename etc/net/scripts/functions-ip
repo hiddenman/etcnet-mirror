@@ -22,7 +22,7 @@ dhcp_cmdline()
 				esac
 			fi
 			T=${DHCP_TIMEOUT:+-t $DHCP_TIMEOUT}
-			echo "$H -d $T $NAME"
+			echo "$H $T $NAME"
 			;;
 		dhclient)
 			if [ -n "$DHCP_HOSTNAME" ]; then
