@@ -59,7 +59,7 @@ case $ACTION in
 				$DENOISE $CANDFILTER |
 				while read FILTEREXPR; do
 					FILTEREXPR=$(eval_string "$FILTEREXPR")
-					$TC filter add dev $NAME $PARENTNODE $CANDEXTRAFILTERARGS $FILTEREXPR flowid $NODEID
+					$TC filter add dev $NAME parent $LAST_QDISC_HANDLE $CANDEXTRAFILTERARGS $FILTEREXPR flowid $NODEID
 				done
 
 			fi
