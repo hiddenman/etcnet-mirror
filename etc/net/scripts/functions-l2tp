@@ -2,6 +2,7 @@
 
 TUNNEL_NAME="${L2TP_PREFIX_TUNNEL}${NAME}"
 SESSION_NAME="${L2TP_PREFIX_SESSION}${NAME}"
+PPP_PROFILE_NAME="${L2TP_PREFIX_PPP_PROFILE}${NAME}"
 
 # VERBOSE="yes"
 PROGRESS="yes"
@@ -77,6 +78,12 @@ l2tp_tunnel_exists() {
 	[ $total -gt 0 ]
 }
 
+l2tp_ppp_profile_exists() {
+	local profile="$1"
+	local total="$($L2TPCONFIG "ppp profile show profile_name=${profile}" 2>/dev/null | wc -l)"
+	[ $total -gt 1 ]
+}
+
 l2tp_session_exists() {
 	local tunnel="$1" && shift
 	local session="$1"
@@ -105,14 +112,57 @@ l2tp_tunnel_stop() {
 	# [ -n "$once" ] && print_message
 }
 
-l2tp_tunnel_start() {
+l2tp_ppp_profile_stop() {
+	local profile="$1"
+	print_message "Remove PPP profile $profile"
+	"$L2TPCONFIG" "ppp profile delete profile_name=$profile"
+}
+
+l2tp_ppp_profile_start() {
 	local name=$1
+	local profile=
+	local config=
+	local cmd=
+	local cmd_complete=
+
+	print_message "Start to create PPP profile $name"
+
+	config="$MYIFACEDIR/${L2TPPPP:-$DEFAULT_L2TPPPP}"
+
+	if ! profiled_filename profile "$config"; then
+		print_message -n "Processing $config: "
+		print_message "empty."
+	else
+		print_message -n "Processing $profile: "
+	fi
+
+	if [ -n "$profile" ]; then
+		cmd="$($DENOISE "$profile" | trim)"
+	fi
+	cmd_complete="ppp profile create profile_name=$name $cmd"
+
+	"$L2TPCONFIG" "$cmd_complete"
+
+	# l2tpconfig - always returns 0, even in case unsuccessful tunnel creation
+	if ! l2tp_ppp_profile_exists "$name"; then
+		print_message "Can not create PPP profile $name"
+		return 1
+	fi
+
+	print_message "PPP profile $name created"
+	# success
+	return 0
+}
+
+l2tp_tunnel_start() {
+	local profile=$1
+	local name=$2
 	local tunnel=
 	local config=
 	local cmd=
 	local cmd_complete=
 
-	print_message "Start to create tunnel $name"
+	print_message "Start to create tunnel $name with PPP profile $profile"
 
 	config="$MYIFACEDIR/${L2TPTUNNEL:-$DEFAULT_L2TPTUNNEL}"
 
@@ -125,7 +175,7 @@ l2tp_tunnel_start() {
 	fi
 
 	cmd="$($DENOISE "$tunnel" | trim)"
-	cmd_complete="tunnel create tunnel_name=$name persist=yes $cmd"
+	cmd_complete="tunnel create ppp_profile_name=$profile tunnel_name=$name persist=yes $cmd"
 
 	"$L2TPCONFIG" "$cmd_complete"
 
@@ -168,7 +218,6 @@ l2tp_session_start() {
 	else
 		print_message -n "Processing $session: "
 	fi
-
 
 	cmd="$($DENOISE "$session" | trim)"
 	cmd_complete="session create tunnel_name=$tunnel_name session_name=$session_name interface_name=$NAME $cmd"

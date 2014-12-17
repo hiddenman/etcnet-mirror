@@ -61,15 +61,11 @@ case "$PPPTYPE" in
 		PTYOPTION="$PPTP --nolaunchpppd $PPTP_SERVER $PPTP_EXTRA_OPTIONS"
 	;;
 	pppoe)
-		[ -x "${PPPOE:=$DEFAULT_PPPOE}" ] || {
-			print_error "$PPPOE does not exist or is not executable. Try installing rp-pppoe-base RPM."
-			exit 1
-		}
 		[ -n "$HOST" ] || {
 			print_error "WARNING: HOST is not set for interface $NAME with PPPTYPE $PPPTYPE"
 			exit 1
 		}
-		PTYOPTION="$PPPOE -I $HOST -U $PPPOE_EXTRA_OPTIONS"
+		PLUGINOPTION="plugin rp-pppoe.so $HOST"
 	;;
 	dialup)
 		BASIC_PPPOPTIONS="$BASIC_PPPOPTIONS modem"
@@ -86,7 +82,9 @@ if is_yes "$RESTORE_DEFAULTROUTE"; then
 fi
 
 # Let the show start...
-$PPPD $BASIC_PPPOPTIONS $PPPOPTIONS ${PTYOPTION:+local pty "$PTYOPTION"} \
+$PPPD $BASIC_PPPOPTIONS $PPPOPTIONS \
+${PLUGINOPTION:+ $PLUGINOPTION} \
+${PTYOPTION:+local pty "$PTYOPTION"} \
 ${PROF_PPPOPTIONSFILE:+ file $PROF_PPPOPTIONSFILE} \
 ${PROF_PPPINITCHAT:+ init "$CHAT_CMD $PROF_PPPINITCHAT"} \
 ${PROF_PPPCONNECTCHAT:+ connect "$CHAT_CMD $PROF_PPPCONNECTCHAT"} \
