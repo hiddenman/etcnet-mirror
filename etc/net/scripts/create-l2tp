@@ -35,6 +35,7 @@ exit_handler()
 		if ! l2tp_session_established "$TUNNEL_NAME" "$SESSION_NAME"; then
 			# remove created tunnel early without session
 			l2tp_tunnel_stop "$TUNNEL_NAME"
+			l2tp_ppp_profile_stop "$PPP_PROFILE_NAME"
 		fi
 
 		# Wait for closing tunnels
@@ -80,9 +81,24 @@ if l2tp_tunnel_exists "$TUNNEL_NAME"; then
 	fi
 fi
 
+# Destroy PPP profile. Make sure that there are not tunnels use it.
+if l2tp_ppp_profile_exists "$PPP_PROFILE_NAME"; then
+	print_message "Old ppp profile $PPP_PROFILE_NAME already exists, destroy it."
+	l2tp_ppp_profile_stop "$PPP_PROFILE_NAME"
+	# Check again... Sometimes it is easy to destroy tunnel.
+	if l2tp_ppp_profile_exists "$PPP_PROFILE_NAME"; then
+		print_message "Old ppp profile $PPP_PROFILE_NAME still exists, giving up."
+		exit 1
+	fi
+fi
+
+# Create PPP profile
+if ! l2tp_ppp_profile_start "$PPP_PROFILE_NAME"; then
+	exit 1
+fi
 
 # Start tunnel
-if ! l2tp_tunnel_start "$TUNNEL_NAME"; then
+if ! l2tp_tunnel_start "$PPP_PROFILE_NAME" "$TUNNEL_NAME"; then
 	exit 1
 fi
 
