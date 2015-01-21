@@ -56,6 +56,6 @@ $OVPN --dev $NAME --daemon \
 	${PROF_CONFFILE:+ --config $PROF_CONFFILE} $KEY_ARGS $TLSAUTH_ARGS \
 	${OVPN_USER:+ --user $OVPN_USER --persist-tun --persist-key} \
 	${OVPN_GROUP:+ --group $OVPN_GROUP} \
-	--cd $OVPNCHROOTDIR/cache --chroot $OVPNCHROOTDIR \
+	--cd $OVPNCHROOTDIR/cache --chroot $OVPNCHROOTDIR --tmp-dir /tmp \
 	--writepid $OVPNRUNDIR/openvpn-iface-$NAME.pid \
 	--up $SCRIPTDIR/openvpn.action
